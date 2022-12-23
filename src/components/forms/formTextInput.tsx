@@ -26,10 +26,6 @@ const COLOR: KeyMap = {
   }
 }
 
-export type TextInputOptions = {
-  matchesField: string
-}
-
 type FormTextInputProps = {
   label: string,  
   placeholder: string,
@@ -66,12 +62,18 @@ const FormTextInput = ({
   matchErrorMessage,
   testId
 }: FormTextInputProps & WithFormProps) => {
-  const getErrorMessage = (val: string) => {
+  const getMatchingFieldErrorMessage = (val: string): string | undefined => (
+    matchesFields
+      ?.map((matchesField) => VALIDATOR.valuesMatch(val, form.valueOf(matchesField), matchErrorMessage || DEFAULT_MATCH_ERROR_MESSAGE))
+      ?.find((errorMessage) => !!errorMessage)
+  )
+
+  const getErrorMessage = (val: string): string | undefined => {
     return VALIDATOR.required(required, val) || 
       VALIDATOR.minLength(minLength, val) || 
       VALIDATOR.maxLength(maxLength, val) ||
       VALIDATOR.regex(regexList, val) ||
-      (matchesField && VALIDATOR.passwordsMatch(val, form.valueOf(matchesField), matchErrorMessage || DEFAULT_MATCH_ERROR_MESSAGE) || undefined)
+      getMatchingFieldErrorMessage(val)
   }
 
   const getFieldUpdate = (newValue: string): Field<string> => {
@@ -83,7 +85,8 @@ const FormTextInput = ({
       error: errorMessage,
       initialError: getErrorMessage(defaultValue || EMPTY) || EMPTY,
     } as Field<string>
-    field.sideEffects = [{type: SideEffectType.MATCH, targetFields: matchesFields}]
+    field.sideEffects = [{type: SideEffectType.MATCH, targetFields: matchesFields || []}]
+    return field
   }
 
   const getType = () => (masked ? 'password' : (type === 'password' ? 'text' : type))

@@ -5,5 +5,5 @@ export const VALIDATOR = {
   minLength: (minLength: number | undefined, value: any | undefined) => minLength && value?.length < minLength ? `Se requiere un mínimo de ${minLength} caracteres` : undefined,
   maxLength: (maxLength: number | undefined, value: any | undefined) => maxLength && value?.length > maxLength ? `No debe exceder los ${maxLength} caracteres` : undefined,
   regex: (regexList: Regex[] | undefined, value: string | undefined) => value && regexList?.find((regex) => regex.expression.test(value) === regex.errorIf)?.message,
-  passwordsMatch: (firstValue: any, secondValue: any, message: string) => (firstValue !== secondValue ? message : undefined)
+  valuesMatch: (firstValue: any, secondValue: any, message: string) => (firstValue !== secondValue ? message : undefined)
 }
