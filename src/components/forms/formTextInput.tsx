@@ -1,11 +1,14 @@
-import React, { ChangeEvent } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEye, faEyeSlash } from '@fortawesome/free-regular-svg-icons'
+import React, { ChangeEvent, useState } from 'react';
 import { useEffect } from 'react';
 import { Regex } from '../../constants/enums';
 import { KeyMap } from '../../constants/strings';
 import { VALIDATOR } from '../../constants/validators';
-import { Field } from '../../hoc/withForm';
+import { Field, SideEffectType, WithFormProps } from '../../hoc/withForm';
 
 const DEFAULT_TEST_ID = 'form-text-input'
+const DEFAULT_MATCH_ERROR_MESSAGE = 'Las contraseñas no coinciden'
 const EMPTY = ''
 const COLOR: KeyMap = {
   'border': {
@@ -15,7 +18,6 @@ const COLOR: KeyMap = {
     requiredMark: 'text-real-red-400'
   },
   'ring': {
-    focus: 'ring-accent',
     error: 'ring-real-red-400'
   },
   'helper': {
@@ -24,23 +26,25 @@ const COLOR: KeyMap = {
   }
 }
 
+export type TextInputOptions = {
+  matchesField: string
+}
+
 type FormTextInputProps = {
   label: string,  
   placeholder: string,
   name: string,
-  field?: Field<string>,
-  masked?: boolean,
+  type?: string,
   defaultValue?: string,
-  registerField: (newField: Field<any>) => void,
-  onChange: (updatedField: Field<any>) => void,
   helperText?: string,
   minLength?: number,
   maxLength?: number,
   regexList?: Regex[],
   required?: boolean,
-  maskCharacter?: string,
   ringFocusColor?: string,
   ringErrorColor?: string,
+  matchesFields?: string[],
+  matchErrorMessage?: string,
   testId?: string
 }
 
@@ -48,42 +52,47 @@ const FormTextInput = ({
   label,  
   placeholder,
   name,
-  field,
-  masked,
+  form,
+  type,
   defaultValue,
-  registerField,
-  onChange,
   helperText,
   minLength,
   maxLength,
   regexList,
   required,
-  maskCharacter,
   ringFocusColor,
   ringErrorColor,
+  matchesFields,
+  matchErrorMessage,
   testId
-}: FormTextInputProps) => {
+}: FormTextInputProps & WithFormProps) => {
   const getErrorMessage = (val: string) => {
     return VALIDATOR.required(required, val) || 
       VALIDATOR.minLength(minLength, val) || 
       VALIDATOR.maxLength(maxLength, val) ||
-      VALIDATOR.regex(regexList, val);
+      VALIDATOR.regex(regexList, val) ||
+      (matchesField && VALIDATOR.passwordsMatch(val, form.valueOf(matchesField), matchErrorMessage || DEFAULT_MATCH_ERROR_MESSAGE) || undefined)
   }
 
   const getFieldUpdate = (newValue: string): Field<string> => {
     const errorMessage = getErrorMessage(newValue)
-    return {
+    const field = {
       name: name,
       value: newValue || defaultValue || EMPTY,
       defaultValue: defaultValue || EMPTY,
       error: errorMessage,
-      initialError: getErrorMessage(defaultValue || EMPTY) || EMPTY
+      initialError: getErrorMessage(defaultValue || EMPTY) || EMPTY,
     } as Field<string>
+    field.sideEffects = [{type: SideEffectType.MATCH, targetFields: matchesFields}]
   }
 
+  const getType = () => (masked ? 'password' : (type === 'password' ? 'text' : type))
+
+  const [masked, setMasked] = useState(type === 'password')
+
   useEffect(() => {
-    registerField(getFieldUpdate(defaultValue || EMPTY))
-  }, [])
+    form.registerField(getFieldUpdate(defaultValue || EMPTY))
+  })
 
   return (
     <div id="input" className="flex flex-col w-full my-3">
@@ -91,7 +100,7 @@ const FormTextInput = ({
         {label}{required && <span className={`${COLOR['label'].requiredMark} ml-1`}>*</span>}
       </label>
       <input
-        type={masked ? 'password' : 'text'}
+        type={getType()}
         id={name}
         name={name}
         placeholder={placeholder}
@@ -101,17 +110,19 @@ const FormTextInput = ({
           focus:ring-2 
           focus:ring-shallow
           focus:shadow-lg
-          ${ field?.error ? 'ring-1' + ' ' + (ringErrorColor || COLOR['ring'].error) : ''}
-          ${ ringFocusColor || COLOR['ring'].focus }
+          focus:ring-accent
+          ${ form.get(name)?.error ? 'ring-1' + ' ' + (ringErrorColor || COLOR['ring'].error) : ''}
           border border-gray-300`}
-        value={field?.value || defaultValue || EMPTY}
-        onChange={(event: ChangeEvent<HTMLInputElement>) => onChange(getFieldUpdate(event.target.value))}
+        value={form.get(name)?.value || defaultValue || EMPTY}
+        onChange={(event: ChangeEvent<HTMLInputElement>) => form.onChange(getFieldUpdate(event.target.value))}
         minLength={minLength}
         maxLength={maxLength}
         data-testid={testId || DEFAULT_TEST_ID}
       />
-      {(field?.error || helperText) && <span className={`text-xs mt-1 ml-1 ${field?.error ? ringErrorColor || COLOR['helper'].error : ''} text-xs mt-1`}>
-        {field?.error || helperText}
+      { type === 'password' &&
+      <FontAwesomeIcon icon={masked ? faEye : faEyeSlash} className="w-6 absolute top-[53px] right-10 cursor-pointer hover:text-real-red-300" onClick={() => setMasked(!masked)}/>}
+      {(form.get(name)?.error || helperText) && <span className={`text-xs mt-1 ml-1 ${form.get(name)?.error ? ringErrorColor || COLOR['helper'].error : ''} text-xs mt-1`}>
+        {form.get(name)?.error || helperText}
       </span>}
     </div>
   );

@@ -104,7 +104,7 @@ const Button = ({
         `
           flex flex-row justify-center align-middle px-6 py-2
           rounded-lg
-          ${!disabled && 'drop-shadow-md'} 
+          ${!disabled && 'drop-shadow-md'}
           ${getBgColor()}
           ${getBgHoverColor()}
           ${getTextColor()} 

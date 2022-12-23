@@ -1,11 +1,66 @@
 import React, { ComponentType, useState } from 'react';
 
+export enum SideEffectType {
+  MATCH,
+  RESET
+}
+
+interface SideEffect {
+  type: SideEffectType,
+  apply: (updatedField: Field<any>, fields: Field<any>[]) => Field<any>[]
+}
+
+const setErrorForMatchingFields = (updatedField: Field<any>, fields: Field<any>[], matchingFieldNames: string[]) => {
+  let newFields: Field<any>[] = [...fields]
+  matchingFieldNames.forEach((matchingFieldName) => {
+    newFields = newFields.map((field) => field.name === matchingFieldName ? {...field, error: updatedField.error} : field)
+  })
+  return newFields
+}
+
+const resetMatchingFields = (fields: Field<any>[], matchingFieldNames: string[]) => {
+  let newFields: Field<any>[] = [...fields]
+  matchingFieldNames.forEach((matchingFieldName) => {
+    newFields = newFields.map((field) => field.name === matchingFieldName ? {...field, value: field.defaultValue} : field)
+  })
+  return newFields
+}
+
+const sideEffects: SideEffect[] = [
+  {
+    type: SideEffectType.MATCH,
+    apply: (updatedField: Field<any>, fields: Field<any>[]): Field<any>[] => {
+      const matchingFieldNames = fields
+      .filter((field) => {
+        return !!field.sideEffects?.find((sideEffect) => sideEffect.type === SideEffectType.MATCH && sideEffect.targetFields.includes(updatedField.name))
+      })
+      .map((field) => field.name)
+      return setErrorForMatchingFields(updatedField, fields, matchingFieldNames)
+    }
+  },
+  {
+    type: SideEffectType.RESET,
+    apply: (updatedField: Field<any>, fields: Field<any>[]): Field<any>[] => {
+      const matchingFieldNames = fields
+      .filter((field) => {
+        return !!field.sideEffects?.find((sideEffect) => sideEffect.type === SideEffectType.RESET && sideEffect.targetFields.includes(updatedField.name))
+      })
+      .map((field) => field.name)
+      return resetMatchingFields(fields, matchingFieldNames)
+    }
+  }
+]
+
 export type Field<T> = {
   name: string,
   value: T,
   defaultValue: T,
   error?: string,
-  initialError?: string
+  initialError?: string,
+  sideEffects?: [{
+    type: SideEffectType,
+    targetFields: string[],
+  }]
 }
 
 export type WithFormProps = {
@@ -32,8 +87,17 @@ function WithForm<T>(WrappedComponent: ComponentType<T & WithFormProps>) {
       fields.find((field) => field.name === fieldName)
     )
 
+    const applySideEffects = (updatedField: Field<T>): Field<any>[] => {
+      let newFields: Field<any>[] = [...fields]
+      for (const sideEffect of sideEffects) {
+        newFields = sideEffects.find((se) => se.type === sideEffect.type)?.apply(updatedField, newFields) || newFields
+      }
+      return newFields
+    }
+
     const onChange = (updatedField: Field<T>): void => {
-      setFields(fields.map((field) => field.name === updatedField.name ? updatedField : field))
+      const newFields = applySideEffects(updatedField)
+      setFields(newFields.map((field) => field.name === updatedField.name ? updatedField : field))
     }
 
     const registerField = (newField: Field<T>): void => {

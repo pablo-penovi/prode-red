@@ -1,6 +1,6 @@
 import React, { FormEvent, Fragment, ReactElement, useEffect, useRef, useState } from 'react';
 import { Regex } from '../../constants/enums';
-import WithForm, { WithFormProps } from '../../hoc/withForm';
+import WithForm, { Field, WithFormProps } from '../../hoc/withForm';
 import Button from '../button';
 import FormButtonContainer from './formButtonContainer';
 import Form from './form';
@@ -14,16 +14,16 @@ import Link from 'next/link';
 
 const DEFAULT_TEST_ID = 'login-form';
 
-type LoginFormProps = {
+type RegisterFormProps = {
   testId: string,
   csrfToken?: string,
 }
 
-const LoginForm = ({
+const RegisterForm = ({
   testId,
   form,
   csrfToken,
-}: LoginFormProps & WithFormProps) => {
+}: RegisterFormProps & WithFormProps) => {
 
   const fadeDuration = 250;
 
@@ -34,8 +34,8 @@ const LoginForm = ({
   return (
     <Fragment>
       <Head>
-        <title>Inicio de sesión</title>
-        <meta name="description" content="Página de inicio de sesión de Prode RED" />
+        <title>Alta de usuario</title>
+        <meta name="description" content="Página de alta de usuarios de Prode RED" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       
@@ -68,10 +68,23 @@ const LoginForm = ({
               placeholder={'Escribí tu contraseña'}
               form={form}
               required={true}
+              matchesFields={['passwordConfirm']}
               testId={'password-textinput'}
             />
           </Fade>
           <Fade bottom duration={fadeDuration} delay={250}>
+            <TextInput 
+              label={'Confirmar contraseña'}
+              name={'passwordConfirm'}
+              type={'password'}
+              placeholder={'Volvé a escribir tu contraseña'}
+              form={form}
+              required={true}
+              matchesFields={['password']}
+              testId={'password-confirm-textinput'}
+            />
+          </Fade>
+          <Fade bottom duration={fadeDuration} delay={300}>
             <FormButtonContainer
               testId={'button-container'}
             >
@@ -81,7 +94,7 @@ const LoginForm = ({
                 disabled={!form.isDirty()}
               />
               <Button 
-                label={'Iniciar sesión'}
+                label={'Abrir cuenta'}
                 type={'submit'}
                 disabled={form.isSubmitDisabled()}
               />
@@ -89,7 +102,7 @@ const LoginForm = ({
           </Fade>
           <Fade bottom duration={fadeDuration} delay={300}>
             <div className="flex justify-center mt-6 text-sm">
-              <span><Link href='/auth/register'>Abrir una nueva cuenta</Link></span>
+              <span><Link href='/auth/login'>Ya tengo una cuenta</Link></span>
             </div>
           </Fade>
         </Form>
@@ -98,4 +111,4 @@ const LoginForm = ({
   );
 };
 
-export default WithForm(LoginForm);
+export default WithForm(RegisterForm);
