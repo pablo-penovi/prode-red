@@ -49,7 +49,7 @@ const COLOR: KeyMap = {
 type ButtonProps = {
   label: string,
   onClick?: MouseEventHandler<HTMLButtonElement>,
-  type: "button" | "submit" | "reset",
+  type?: "button" | "submit" | "reset",
   disabled?: boolean,
   bgColor?: string,
   textColor?: string,
@@ -75,27 +75,27 @@ const Button = ({
 }: ButtonProps) => {
 
   const getBgColor = () => (
-    (disabled && (disabledBgColor || COLOR[type]?.bg?.disabled)) || bgColor || COLOR[type]?.bg?.enabled || ''
+    (disabled && (disabledBgColor || (type && COLOR[type]?.bg?.disabled))) || bgColor || (type && COLOR[type]?.bg?.enabled) || ''
   )
 
   const getBgHoverColor = () => (
-    (disabled && COLOR[type]?.bg?.disabledHover) || bgHoverColor || COLOR[type]?.bg?.hover || ''
+    (disabled && (type && COLOR[type]?.bg?.disabledHover)) || bgHoverColor || (type && COLOR[type]?.bg?.hover) || ''
   )
 
   const getTextColor = () => (
-    (disabled && COLOR[type]?.text?.disabled) || textColor || COLOR[type]?.text?.enabled || ''
+    (disabled && (type && COLOR[type]?.text?.disabled)) || textColor || (type && COLOR[type]?.text?.enabled) || ''
   )
 
   const getTextHoverColor = () => (
-    (disabled && (disabledTextColor || COLOR[type]?.text?.disabledHover)) || textHoverColor || COLOR[type]?.text?.hover || ''
+    (disabled && (disabledTextColor || (type && COLOR[type]?.text?.disabledHover))) || textHoverColor || (type && COLOR[type]?.text?.hover) || ''
   )
 
   const getBorderColor = () => (
-    (disabled && COLOR[type]?.border?.disabled) || COLOR[type]?.border?.enabled || ''
+    (disabled && (type && COLOR[type]?.border?.disabled)) || (type && COLOR[type]?.border?.enabled) || ''
   )
 
   const getBorderHoverColor = () => (
-    (disabled && COLOR[type]?.border?.disabledHover) || COLOR[type]?.border?.hover || ''
+    (disabled && (type && COLOR[type]?.border?.disabledHover)) || (type && COLOR[type]?.border?.hover) || ''
   )
 
   return (

@@ -1,4 +1,4 @@
-import React, { FormEvent, Fragment, ReactElement, useEffect, useRef, useState } from 'react';
+import React, { FormEvent, Fragment, MouseEvent } from 'react';
 import { Regex } from '../../constants/enums';
 import WithForm, { WithFormProps } from '../../hoc/withForm';
 import Button from '../button';
@@ -7,8 +7,7 @@ import Form from './form';
 import TextInput from './formTextInput';
 import Fade from 'react-reveal/Fade';
 import Zoom from 'react-reveal/Zoom';
-import { ClientSafeProvider, getCsrfToken, getProviders, LiteralUnion, signIn } from 'next-auth/react';
-import { BuiltInProviderType } from 'next-auth/providers';
+import { signIn } from 'next-auth/react';
 import Head from 'next/head';
 import Link from 'next/link';
 
@@ -28,7 +27,16 @@ const LoginForm = ({
   const fadeDuration = 250;
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
-    signIn('emailProvider')
+    event.preventDefault()
+    signIn('discord')
+  }
+
+  const loginWithGoogle = (event: MouseEvent<HTMLButtonElement>) => {
+    signIn('google')
+  }
+
+  const loginWithDiscord = (event: MouseEvent<HTMLButtonElement>) => {
+    signIn('discord')
   }
 
   return (
@@ -91,6 +99,14 @@ const LoginForm = ({
             <div className="flex justify-center mt-6 text-sm">
               <span><Link href='/auth/register'>Abrir una nueva cuenta</Link></span>
             </div>
+            <Button 
+              label={'Iniciar sesión con Google'}
+              onClick={loginWithGoogle}
+            />
+            <Button 
+              label={'Iniciar sesión con Discord'}
+              onClick={loginWithDiscord}
+            />
           </Fade>
         </Form>
       </Zoom>

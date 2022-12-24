@@ -28,7 +28,7 @@ const RegisterForm = ({
   const fadeDuration = 250;
 
   const submit = (event: FormEvent<HTMLFormElement>) => {
-    signIn('emailProvider')
+    signIn('discord')
   }
 
   return (
