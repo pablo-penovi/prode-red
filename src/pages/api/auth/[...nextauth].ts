@@ -7,7 +7,7 @@ import GoogleProvider from "next-auth/providers/google";
 
 export const authOptions: NextAuthOptions = {
   pages: {
-    signIn: 'auth/login'
+    signIn: '/auth/login'
   },
   // Include user.id on session
   callbacks: {

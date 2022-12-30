@@ -3,8 +3,9 @@ import { withTRPC } from "@trpc/next";
 import type { AppRouter } from "../server/router";
 import type { AppType } from "next/dist/shared/lib/utils";
 import superjson from "superjson";
-import { SessionProvider } from "next-auth/react";
+import { SessionProvider, } from "next-auth/react";
 import "../styles/globals.css";
+import AppContainer from "../components/appContainer";
 
 const MyApp: AppType = ({
   Component,
@@ -12,9 +13,9 @@ const MyApp: AppType = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <div className="flex flex-col align-middle justify-start p-10 min-h-screen text-theme-dark antialiased bg-gradient-to-br from-real-red-300 to-matt-blue-800">
+      <AppContainer>
         <Component {...pageProps} />
-      </div>
+      </AppContainer>
     </SessionProvider>
   );
 };
