@@ -123,7 +123,7 @@ const FormTextInput = ({
         data-testid={testId || DEFAULT_TEST_ID}
       />
       { type === 'password' &&
-      <FontAwesomeIcon icon={masked ? faEye : faEyeSlash} className="w-6 absolute top-[53px] right-10 cursor-pointer hover:text-real-red-300" onClick={() => setMasked(!masked)}/>}
+      <FontAwesomeIcon icon={masked ? faEye : faEyeSlash} className="w-6 absolute top-[53px] right-4 cursor-pointer hover:text-real-red-300" onClick={() => setMasked(!masked)}/>}
       {(form.get(name)?.error || helperText) && <span className={`text-xs mt-1 ml-1 ${form.get(name)?.error ? ringErrorColor || COLOR['helper'].error : ''} text-xs mt-1`}>
         {form.get(name)?.error || helperText}
       </span>}
