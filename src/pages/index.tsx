@@ -11,7 +11,7 @@ type TechnologyCardProps = {
 
 const Home: NextPage = () => {
   const hello = trpc.useQuery(["example.hello", { text: "motherfucker" }])
-  const { status } = useSession({ required: true })
+  const { data: session, status } = useSession({ required: true })
 
   return (
     <>
@@ -51,7 +51,7 @@ const Home: NextPage = () => {
               />
             </div>
             <div className="pt-6 text-2xl text-shallow-water-600 flex justify-center items-center w-full">
-              {hello.data ? <p>{hello.data.greeting}</p> : <p>Loading..</p>}
+              <p>Hello {session?.user?.name}</p>
             </div>
           </main>
         </>
