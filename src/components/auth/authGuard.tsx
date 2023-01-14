@@ -1,8 +1,8 @@
 import React, { Fragment, ReactNode, useCallback, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
-import Role from '../../types/Role';
 import LoaderOverlay from '../loaderOverlay';
+import Role from '../../types/Role';
 
 export const DEFAULT_TEST_ID = 'app-container';
 
@@ -15,6 +15,7 @@ const PUBLIC_PAGES = [
   '/auth/signin',
   '/auth/register',
   '/auth/error',
+  '/site/schedule',
   '/_error',
   '/'
 ]
@@ -36,20 +37,16 @@ const AuthGuard = ({
     return PUBLIC_PAGES.includes(router.pathname)
   }, [router.pathname])
 
-  const userHasRole = (userRole: Role): boolean => (
-    session?.user?.roles?.some((role) => role.name === userRole.name) || false
-  )
-
   const isAuthorized = () => (
     isAuthenticated() &&
-    (!router.pathname.startsWith('/admin') || userHasRole({ id: '', name: 'admin'}))
+    (!router.pathname.startsWith('/admin') || session?.user?.role === Role.admin)
   )
 
   useEffect(() => {
     if (!isPublicPage() && !isAuthenticated()) {
       router.push('/auth/signin')
     }
-    if (router.pathname === '/') {
+    if (isAuthenticated() && (router.pathname === '/' || router.pathname.startsWith('/auth'))) {
       router.push('/site')
     }
   }, [isPublicPage, isAuthenticated, router])

@@ -5,6 +5,8 @@ import { useRouter } from 'next/router';
 import ProfileButton from './profileButton';
 import HomeButton from './homeButton';
 import DesktopMenu from './desktopMenu';
+import { MenuOption } from '../../../types/MenuOption';
+import Role from '../../../types/Role';
 
 export const DEFAULT_TEST_ID = 'header';
 
@@ -12,19 +14,15 @@ type HeaderProps = {
   testId?: string,
 }
 
-export type MenuOption = {
-  name: string,
-  href: string,
-}
-
 const MENU_OPTIONS: MenuOption[] = [
   {
     name: 'Calendario',
-    href: '/calendario'
+    href: '/site/schedule',
   },
   {
     name: 'Jugadas',
-    href: '/jugadas'
+    href: '/jugadas',
+    forRole: Role.user
   },
 ]
 

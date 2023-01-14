@@ -1,6 +1,6 @@
-type Role = {
-  id: string,
-  name: string
+enum Role {
+  user = 'user',
+  admin = 'admin',
 }
 
 export default Role

@@ -6,18 +6,21 @@ import DiscordProvider from "next-auth/providers/discord";
 import GoogleProvider from "next-auth/providers/google";
 import Role from "../../../types/Role";
 
+const ADMINS = ['pablopenovi@gmail.com']
+
 export const authOptions: NextAuthOptions = {
   pages: {
     signIn: '/auth/signin',
     error: '/auth/error',
   },
-  // Include user.id on session
   callbacks: {
+    // Set role according to user email
     async session({ session, user }) {
+      console.log(JSON.stringify(session))
+      console.log(JSON.stringify(user))
       if (session.user) {
-        session.user.id = user.id;
-        session.user.roles = user.roles as Role[];
-        
+        session.user.id = user?.id
+        session.user.role = ADMINS.includes(user?.email || '') ? Role.admin : Role.user
       }
       return session;
     },
@@ -41,7 +44,7 @@ export const authOptions: NextAuthOptions = {
     })
   ],
   session: {
-    strategy: "jwt"
+    strategy: "database"
   }
 };
 
