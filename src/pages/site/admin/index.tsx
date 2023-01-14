@@ -1,8 +1,8 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import { Fragment, RefObject } from "react";
-import SectionTitle from "../../components/sectionTitle";
-import { trpc } from "../../utils/trpc";
+import SectionTitle from "../../../components/sectionTitle";
+import { trpc } from "../../../utils/trpc";
 
 type TechnologyCardProps = {
   name: string;

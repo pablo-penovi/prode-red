@@ -6,6 +6,8 @@ import superjson from "superjson";
 import { SessionProvider, } from "next-auth/react";
 import "../styles/globals.css";
 import AppContainer from "../components/appContainer";
+import NextNProgress from 'nextjs-progressbar';
+import AuthGuard from "../components/auth/authGuard";
 
 const MyApp: AppType = ({
   Component,
@@ -13,9 +15,12 @@ const MyApp: AppType = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <AppContainer>
-        <Component {...pageProps} />
-      </AppContainer>
+      <NextNProgress color="#B2083A"/>
+      <AuthGuard>
+        <AppContainer>
+          <Component {...pageProps} />
+        </AppContainer>
+      </AuthGuard>
     </SessionProvider>
   );
 };

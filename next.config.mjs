@@ -14,4 +14,8 @@ function defineNextConfig(config) {
 
 export default defineNextConfig({
   reactStrictMode: true,
+  images: {
+    formats: ['image/avif', 'image/webp'],
+    domains: ['cdn.discordapp.com'],
+  },
 });

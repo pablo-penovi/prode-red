@@ -11,7 +11,7 @@ type TechnologyCardProps = {
 
 const Home: NextPage = () => {
   const hello = trpc.useQuery(["example.hello", { text: "motherfucker" }])
-  const { data: session, status } = useSession({ required: true })
+  const { data: session, status } = useSession()
 
   return (
     <>
