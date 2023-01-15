@@ -22,7 +22,7 @@ const MENU_OPTIONS: MenuOption[] = [
   {
     name: 'Jugadas',
     href: '/jugadas',
-    forRole: Role.user
+    forRoles: [Role.user]
   },
 ]
 

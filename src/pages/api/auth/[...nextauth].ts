@@ -31,7 +31,12 @@ export const authOptions: NextAuthOptions = {
     async session({ session, user }) {
       if (session.user) {
         session.user.id = user?.id
-        session.user.role = ADMINS.includes(user?.email || '') ? Role.admin : Role.user
+        
+        if (ADMINS.includes(user?.email || '')) {
+          session.user.role = Object.values(Role)
+        } else {
+          session.user.role = [Role.user]
+        }
       }
       return session;
     },

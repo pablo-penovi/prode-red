@@ -39,12 +39,12 @@ const AuthGuard = ({
 
   const isAuthorized = () => (
     isAuthenticated() &&
-    (!router.pathname.startsWith('/admin') || session?.user?.role === Role.admin)
+    (!router.pathname.startsWith('/admin') || session?.user?.role?.includes(Role.admin))
   )
 
   useEffect(() => {
     if (!isPublicPage() && !isAuthenticated()) {
-      router.push('/auth/signin')
+      router.push('/')
     }
     if (isAuthenticated() && (router.pathname === '/' || router.pathname.startsWith('/auth'))) {
       router.push('/site')

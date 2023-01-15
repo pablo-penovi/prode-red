@@ -23,12 +23,12 @@ const DesktopMenu = ({
     return index + 1 < options.length ? LINK_STYLE_WITH_MARGIN : LINK_STYLE
   }
 
-  const shouldRenderOption = (optionRole: Role | undefined): boolean => (
-    !optionRole || (!!session?.user && (session.user.role === Role.admin || optionRole === session.user.role))
+  const shouldRenderOption = (optionRoles: Role[] | undefined): boolean => (
+    !optionRoles || (!!session?.user?.role && (session.user.role.some((userRole) => optionRoles.includes(userRole))))
   )
 
   const getOption = (menuOption: MenuOption, index: number) => {
-    if (shouldRenderOption(menuOption.forRole)) {
+    if (shouldRenderOption(menuOption.forRoles)) {
       return (
         <Link key={index} href={menuOption.href}>
           <a className={getLinkStyle(index)} data-testid={`${testId || DEFAULT_TEST_ID}-option-${index}`}>
