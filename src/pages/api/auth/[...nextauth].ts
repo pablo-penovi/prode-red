@@ -50,6 +50,7 @@ export const authOptions: NextAuthOptions = {
       httpOptions: {
         timeout: 40000,
       },
+      allowDangerousEmailAccountLinking: true,
     }),
     DiscordProvider({
       clientId: env.DISCORD_CLIENT_ID,
@@ -57,10 +58,18 @@ export const authOptions: NextAuthOptions = {
       httpOptions: {
         timeout: 40000,
       },
+      allowDangerousEmailAccountLinking: true,
     })
   ],
   session: {
     strategy: "database"
+  },
+  events: {
+    async linkAccount({ user, account, profile }) {
+      console.log(JSON.stringify(user))
+      console.log(JSON.stringify(account))
+      console.log(JSON.stringify(profile))
+    }
   }
 };
 
