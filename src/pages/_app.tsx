@@ -8,6 +8,7 @@ import "../styles/globals.css";
 import AppContainer from "../components/appContainer";
 import NextNProgress from 'nextjs-progressbar';
 import AuthGuard from "../components/auth/authGuard";
+import Toast from "../components/toast";
 
 const MyApp: AppType = ({
   Component,
@@ -16,6 +17,7 @@ const MyApp: AppType = ({
   return (
     <SessionProvider session={session}>
       <NextNProgress color="#B2083A"/>
+      <Toast />
       <AuthGuard>
         <AppContainer>
           <Component {...pageProps} />

@@ -1,3 +1,5 @@
+export const DNI_REGEX = new RegExp('^[F|M|0-9]?[0-9]{7}$', 'i')
+
 export type Regex = {
   expression: RegExp,
   errorIf: boolean,
@@ -13,5 +15,10 @@ export const Regex = {
       expression: new RegExp(`^${word}$`),
       errorIf: false,
       message: 'Las contraseñas no coinciden'
-    } as Regex)
+    } as Regex),
+    dni: {
+      expression: DNI_REGEX,
+      errorIf: false,
+      message: 'No es un DNI válido'
+    }
 } as const

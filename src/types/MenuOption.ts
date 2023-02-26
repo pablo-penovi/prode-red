@@ -1,7 +1,13 @@
+import { IconDefinition } from "@fortawesome/free-regular-svg-icons"
 import Role from "./Role"
 
-export type MenuOption = {
+type MenuOption = {
   name: string,
   href: string,
-  forRoles?: Role[]
+  forRoles?: Role[],
+  icon?: IconDefinition,
+  enabled: boolean,
+  tooltip?: string,
 }
+
+export default MenuOption

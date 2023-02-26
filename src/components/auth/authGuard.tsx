@@ -21,7 +21,6 @@ const PUBLIC_PAGES = [
 ]
 
 const AuthGuard = ({
-  testId,
   children,
 }: AuthGuardProps) => {
   const { data: session, status } = useSession()
@@ -46,15 +45,16 @@ const AuthGuard = ({
     if (!isPublicPage() && !isAuthenticated()) {
       router.push('/')
     }
+    // TODO: Esta regla redirige a /site cuando quiero entrar a /site/admin, aunque sea admin. Revisar por que
     if (isAuthenticated() && (router.pathname === '/' || router.pathname.startsWith('/auth'))) {
-      router.push('/site')
+      router.push('/site/admin')
     }
   }, [isPublicPage, isAuthenticated, router])
 
   return (
     <Fragment>
       { status === 'loading' && <LoaderOverlay testId={'router-spinner'}/> }
-      { !(status === 'loading') && (isPublicPage() || (isAuthenticated() && isAuthorized())) &&
+      { !(status === 'loading') && (isPublicPage() || isAuthorized()) &&
         children
       }
     </Fragment>
